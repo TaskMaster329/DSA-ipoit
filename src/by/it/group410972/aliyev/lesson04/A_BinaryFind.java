@@ -1,5 +1,4 @@
 package by.it.group410972.aliyev.lesson04;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -12,7 +11,7 @@ import java.util.Scanner;
 Во второй строке
         - целое число 1<=k<=10000 (сколько чисел нужно найти)
         - k натуральных чисел b1,...,bk не превышающих 10E9 (сами числа)
-Для каждого i от 1 до kk необходимо вывести индекс 1<=j<=n,
+Для каждого i от 1 до k необходимо вывести индекс 1<=j<=n,
 для которого A[j]=bi, или -1, если такого j нет.
 
         Sample Input:
@@ -29,39 +28,45 @@ public class A_BinaryFind {
     public static void main(String[] args) throws FileNotFoundException {
         InputStream stream = A_BinaryFind.class.getResourceAsStream("dataA.txt");
         A_BinaryFind instance = new A_BinaryFind();
-        //long startTime = System.currentTimeMillis();
         int[] result = instance.findIndex(stream);
-        //long finishTime = System.currentTimeMillis();
         for (int index : result) {
             System.out.print(index + " ");
         }
     }
 
     int[] findIndex(InputStream stream) throws FileNotFoundException {
-        //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
 
-        //размер отсортированного массива
+        // Читаем размер массива
         int n = scanner.nextInt();
-        //сам отсортированный массива
         int[] a = new int[n];
-        for (int i = 1; i <= n; i++) {
-            a[i - 1] = scanner.nextInt();
+        for (int i = 0; i < n; i++) {
+            a[i] = scanner.nextInt();
         }
 
-        //размер массива индексов
+        // Читаем количество запросов и выполняем бинарный поиск
         int k = scanner.nextInt();
         int[] result = new int[k];
         for (int i = 0; i < k; i++) {
             int value = scanner.nextInt();
-            //тут реализуйте бинарный поиск индекса
-
-
-            result[i] = 0;
+            result[i] = binarySearch(a, value);
         }
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
 
+    // Реализация бинарного поиска
+    int binarySearch(int[] array, int key) {
+        int left = 0, right = array.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (array[mid] == key) {
+                return mid + 1; // Возвращаем 1-индексированный результат
+            } else if (array[mid] < key) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return -1; // Если элемент не найден
+    }
 }
