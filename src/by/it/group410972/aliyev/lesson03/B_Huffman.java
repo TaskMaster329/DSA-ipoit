@@ -1,8 +1,10 @@
 package by.it.group410972.aliyev.lesson03;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+
 
 // Lesson 3. B_Huffman.
 // Восстановите строку по её коду и беспрефиксному коду символов.
@@ -40,6 +42,7 @@ import java.util.Scanner;
 //        Sample Output 2:
 //        abacabad
 
+
 public class B_Huffman {
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -51,17 +54,31 @@ public class B_Huffman {
 
     String decode(InputStream inputStream) throws FileNotFoundException {
         StringBuilder result = new StringBuilder();
-        //прочитаем строку для кодирования из тестового файла
         Scanner scanner = new Scanner(inputStream);
-        Integer count = scanner.nextInt();
-        Integer length = scanner.nextInt();
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! НАЧАЛО ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        //тут запишите ваше решение
+        int count = scanner.nextInt();
+        int length = scanner.nextInt();
+        scanner.nextLine(); // Пропустить перевод строки после чисел
 
+        // Словарь для хранения соответствия кодов символам
+        Map<String, Character> codeMap = new HashMap<>();
+        for (int i = 0; i < count; i++) {
+            String line = scanner.nextLine();
+            String[] parts = line.split(": ");
+            codeMap.put(parts[1], parts[0].charAt(0));
+        }
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! КОНЕЦ ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        return result.toString(); //01001100100111
+        // Закодированная строка
+        String encodedString = scanner.nextLine();
+
+        // Декодирование
+        StringBuilder currentCode = new StringBuilder();
+        for (char c : encodedString.toCharArray()) {
+            currentCode.append(c);
+            if (codeMap.containsKey(currentCode.toString())) {
+                result.append(codeMap.get(currentCode.toString()));
+                currentCode.setLength(0);
+            }
+        }
+        return result.toString();
     }
-
-
 }
