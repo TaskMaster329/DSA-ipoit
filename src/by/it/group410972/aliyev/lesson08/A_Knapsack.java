@@ -35,27 +35,35 @@ Sample Output 2:
 
 public class A_Knapsack {
 
-    int getMaxWeight(InputStream stream ) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+    int getMaxWeight(InputStream stream) {
         Scanner scanner = new Scanner(stream);
-        int w=scanner.nextInt();
-        int n=scanner.nextInt();
-        int gold[]=new int[n];
+        int W = scanner.nextInt(); // Вместимость рюкзака
+        int n = scanner.nextInt(); // Количество золотых слитков
+        int[] gold = new int[n]; // Массив с весами слитков
+
+        // Заполняем массив весов слитков
         for (int i = 0; i < n; i++) {
-            gold[i]=scanner.nextInt();
+            gold[i] = scanner.nextInt();
         }
 
+        // Массив для динамического программирования
+        int[] dp = new int[W + 1];
 
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Заполняем массив dp
+        for (int i = 0; i < n; i++) {
+            for (int w = gold[i]; w <= W; w++) {
+                dp[w] = Math.max(dp[w], dp[w - gold[i]] + gold[i]);
+            }
+        }
+
+        // Максимальный вес, который можно унести в рюкзаке с вместимостью W
+        return dp[W];
     }
-
 
     public static void main(String[] args) throws FileNotFoundException {
         InputStream stream = A_Knapsack.class.getResourceAsStream("dataA.txt");
         A_Knapsack instance = new A_Knapsack();
-        int res=instance.getMaxWeight(stream);
+        int res = instance.getMaxWeight(stream);
         System.out.println(res);
     }
 }
