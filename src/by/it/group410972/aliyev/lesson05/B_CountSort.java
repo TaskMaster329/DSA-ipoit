@@ -16,7 +16,6 @@ import java.util.Scanner;
 
 public class B_CountSort {
 
-
     public static void main(String[] args) throws FileNotFoundException {
         InputStream stream = B_CountSort.class.getResourceAsStream("dataB.txt");
         B_CountSort instance = new B_CountSort();
@@ -27,22 +26,40 @@ public class B_CountSort {
     }
 
     int[] countSort(InputStream stream) throws FileNotFoundException {
-        //подготовка к чтению данных
+        // подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        //размер массива
+
+        // размер массива
         int n = scanner.nextInt();
         int[] points = new int[n];
 
-        //читаем точки
+        // читаем числа в массив
+        int max = 0;  // максимальное число, которое мы будем сортировать
         for (int i = 0; i < n; i++) {
             points[i] = scanner.nextInt();
+            if (points[i] > max) {
+                max = points[i];  // находим максимальное число
+            }
         }
-        //тут реализуйте логику задачи с применением сортировки подсчетом
 
+        // создаем массив подсчётов для чисел от 0 до max
+        int[] count = new int[max + 1];
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return points;
+        // Подсчитываем количество вхождений каждого числа
+        for (int i = 0; i < n; i++) {
+            count[points[i]]++;
+        }
+
+        // Восстанавливаем отсортированный массив
+        int[] sorted = new int[n];
+        int index = 0;
+        for (int i = 0; i <= max; i++) {
+            while (count[i] > 0) {
+                sorted[index++] = i;
+                count[i]--;
+            }
+        }
+
+        return sorted;
     }
-
 }

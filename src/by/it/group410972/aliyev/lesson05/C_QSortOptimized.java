@@ -3,6 +3,7 @@ package by.it.group410972.aliyev.lesson05;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.Arrays;
 
 /*
 Видеорегистраторы и площадь 2.
@@ -29,6 +30,8 @@ import java.util.Scanner;
 */
 
 
+
+
 public class C_QSortOptimized {
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -41,36 +44,64 @@ public class C_QSortOptimized {
     }
 
     int[] getAccessory2(InputStream stream) throws FileNotFoundException {
-        //подготовка к чтению данных
+        // Подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!! НАЧАЛО ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!
-        //число отрезков отсортированного массива
+
+        // Читаем количество отрезков и точек
         int n = scanner.nextInt();
         Segment[] segments = new Segment[n];
-        //число точек
         int m = scanner.nextInt();
         int[] points = new int[m];
         int[] result = new int[m];
 
-        //читаем сами отрезки
+        // Чтение отрезков
         for (int i = 0; i < n; i++) {
-            //читаем начало и конец каждого отрезка
             segments[i] = new Segment(scanner.nextInt(), scanner.nextInt());
         }
-        //читаем точки
+
+        // Чтение точек
         for (int i = 0; i < m; i++) {
             points[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением быстрой сортировки
-        //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
 
+        // Сортируем отрезки по началу отрезка
+        Arrays.sort(segments);
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        // Для каждой точки находим подходящие отрезки
+        for (int i = 0; i < m; i++) {
+            result[i] = findSegmentsForPoint(segments, points[i]);
+        }
+
         return result;
     }
 
-    //отрезок
-    private class Segment implements Comparable {
+    // Метод для бинарного поиска первого отрезка, который содержит точку
+    private int findSegmentsForPoint(Segment[] segments, int point) {
+        int low = 0, high = segments.length - 1;
+        // Бинарный поиск для первого подходящего отрезка
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (segments[mid].start <= point) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        // Теперь нужно пройти по всем отрезкам, которые содержат точку
+        int count = 0;
+        for (int i = high; i >= 0; i--) {
+            if (segments[i].start <= point && segments[i].stop >= point) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+
+    // Класс для представления отрезков
+    private class Segment implements Comparable<Segment> {
         int start;
         int stop;
 
@@ -80,10 +111,8 @@ public class C_QSortOptimized {
         }
 
         @Override
-        public int compareTo(Object o) {
-            //подумайте, что должен возвращать компаратор отрезков
-            return 0;
+        public int compareTo(Segment other) {
+            return Integer.compare(this.start, other.start);
         }
     }
-
 }
