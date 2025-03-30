@@ -46,25 +46,84 @@ import java.util.Scanner;
 */
 
 
+
 public class C_EditDist {
 
     String getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int len1 = one.length();
+        int len2 = two.length();
 
+        // Инициализируем таблицу для динамического программирования
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        char[][] operation = new char[len1 + 1][len2 + 1]; // Для отслеживания операций
 
-        String result = "";
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Заполняем таблицу на базе базовых случаев
+        for (int i = 0; i <= len1; i++) {
+            dp[i][0] = i;
+            operation[i][0] = '-';  // Для удаления символа
+        }
+        for (int j = 0; j <= len2; j++) {
+            dp[0][j] = j;
+            operation[0][j] = '+';  // Для вставки символа
+        }
+
+        // Заполняем таблицу для остальных случаев
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                    operation[i][j] = '#';  // Совпадение
+                } else {
+                    // Выбираем минимальную операцию и записываем её
+                    int insert = dp[i][j - 1] + 1;
+                    int delete = dp[i - 1][j] + 1;
+                    int replace = dp[i - 1][j - 1] + 1;
+
+                    dp[i][j] = Math.min(Math.min(insert, delete), replace);
+
+                    if (dp[i][j] == insert) {
+                        operation[i][j] = '+';  // Вставка
+                    } else if (dp[i][j] == delete) {
+                        operation[i][j] = '-';  // Удаление
+                    } else {
+                        operation[i][j] = '~';  // Замена
+                    }
+                }
+            }
+        }
+
+        // Прослеживаем операции, начиная с dp[len1][len2]
+        StringBuilder result = new StringBuilder();
+        int i = len1, j = len2;
+        while (i > 0 || j > 0) {
+            if (operation[i][j] == '#') {
+                result.insert(0, "#,");
+                i--;
+                j--;
+            } else if (operation[i][j] == '-') {
+                result.insert(0, "-" + one.charAt(i - 1) + ",");
+                i--;
+            } else if (operation[i][j] == '+') {
+                result.insert(0, "+" + two.charAt(j - 1) + ",");
+                j--;
+            } else if (operation[i][j] == '~') {
+                result.insert(0, "~" + two.charAt(j - 1) + ",");
+                i--;
+                j--;
+            }
+        }
+
+        return result.toString();
     }
-
 
     public static void main(String[] args) throws FileNotFoundException {
         InputStream stream = C_EditDist.class.getResourceAsStream("dataABC.txt");
         C_EditDist instance = new C_EditDist();
         Scanner scanner = new Scanner(stream);
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-    }
 
+        // Чтение строк и вывод результата для каждой пары строк
+        System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
+    }
 }

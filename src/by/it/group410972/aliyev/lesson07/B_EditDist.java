@@ -36,26 +36,49 @@ import java.util.Scanner;
 
 */
 
+
+
 public class B_EditDist {
 
-
     int getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int len1 = one.length();
+        int len2 = two.length();
 
+        // Инициализируем таблицу для динамического программирования
+        int[][] dp = new int[len1 + 1][len2 + 1];
 
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Заполняем таблицу на базе базовых случаев
+        for (int i = 0; i <= len1; i++) {
+            dp[i][0] = i; // Удаления всех символов из первой строки
+        }
+        for (int j = 0; j <= len2; j++) {
+            dp[0][j] = j; // Вставки всех символов во вторую строку
+        }
+
+        // Заполняем таблицу для остальных случаев
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1]; // Если символы равны, не требуется операций
+                } else {
+                    dp[i][j] = Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;
+                    // Вставка, удаление, замена — выбираем минимальную операцию
+                }
+            }
+        }
+
+        // Результат — это минимальное количество операций для преобразования всей первой строки во вторую
+        return dp[len1][len2];
     }
-
 
     public static void main(String[] args) throws FileNotFoundException {
         InputStream stream = B_EditDist.class.getResourceAsStream("dataABC.txt");
         B_EditDist instance = new B_EditDist();
         Scanner scanner = new Scanner(stream);
+
+        // Чтение строк и вывод результата для каждой пары строк
         System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
         System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
         System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
     }
-
 }
