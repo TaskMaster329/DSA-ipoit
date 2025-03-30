@@ -3,6 +3,8 @@ package by.it.group410972.aliyev.lesson06;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /*
 Задача на программирование: наибольшая невозростающая подпоследовательность
@@ -35,32 +37,70 @@ import java.util.Scanner;
 */
 
 
+
+
 public class C_LongNotUpSubSeq {
 
     public static void main(String[] args) throws FileNotFoundException {
-        InputStream stream = B_LongDivComSubSeq.class.getResourceAsStream("dataC.txt");
+        InputStream stream = C_LongNotUpSubSeq.class.getResourceAsStream("dataC.txt");
         C_LongNotUpSubSeq instance = new C_LongNotUpSubSeq();
-        int result = instance.getNotUpSeqSize(stream);
-        System.out.print(result);
+        instance.getNotUpSeqSize(stream);
     }
 
     int getNotUpSeqSize(InputStream stream) throws FileNotFoundException {
-        //подготовка к чтению данных
+        // Подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        //общая длина последовательности
+
+        // Читаем длину последовательности
         int n = scanner.nextInt();
         int[] m = new int[n];
-        //читаем всю последовательность
+
+        // Читаем саму последовательность
         for (int i = 0; i < n; i++) {
             m[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи методами динамического программирования (!!!)
-        int result = 0;
 
+        // Динамическое программирование (dp[i] - длина наибольшей невозрастающей подпоследовательности до элемента i)
+        int[] dp = new int[n];
+        int[] prev = new int[n];  // Для восстановления последовательности
+        int maxLength = 1;
+        int lastIndex = 0;
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Изначально каждый элемент является последовательностью длины 1
+        dp[0] = 1;
+        prev[0] = -1;  // Нет предыдущего элемента
+
+        for (int i = 1; i < n; i++) {
+            dp[i] = 1;  // Минимальная длина подпоследовательности - сам элемент
+            prev[i] = -1;  // Пока нет предшествующего элемента
+
+            for (int j = 0; j < i; j++) {
+                // Если текущий элемент меньше или равен предыдущему, обновляем dp[i]
+                if (m[i] <= m[j] && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                    prev[i] = j;  // Запоминаем индекс предыдущего элемента
+                }
+            }
+
+            if (dp[i] > maxLength) {
+                maxLength = dp[i];
+                lastIndex = i;
+            }
+        }
+
+        // Восстановление самой подпоследовательности
+        ArrayList<Integer> sequence = new ArrayList<>();
+        for (int i = lastIndex; i >= 0; i = prev[i]) {
+            sequence.add(i + 1);  // Индексы начинаются с 1
+            if (prev[i] == -1) break;
+        }
+
+        // Печать результата
+        Collections.reverse(sequence);  // Мы восстанавливали последовательность от конца
+        System.out.println(maxLength);
+        for (int index : sequence) {
+            System.out.print(index + " ");
+        }
+        return maxLength;
     }
-
 }
